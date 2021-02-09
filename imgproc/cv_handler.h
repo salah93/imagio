@@ -18,7 +18,7 @@ typedef struct Blob{
     unsigned int length;    
 } Blob;
 
-Blob *resizer(Blob *in, PixelDim *zoom, int quality, int method, const char *format, CvRect *roi);
+Blob *resizer(unsigned char *data, Blob *in, PixelDim *zoom, int quality, int method, const char *format, CvRect *roi);
 Blob *blender(const Blob *bg, const Blob *fg, const Blob *mask, int quality, const char *format, const float alpha, CvRect *roi);
 
 #endif

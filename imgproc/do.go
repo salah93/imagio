@@ -64,8 +64,12 @@ func Filters(o *Options, b []byte) []byte {
 func resize(o *Options, zoom *PixelDim, roi *Rect) []byte {
 	var data []byte
 
+	var o_base_blob = blobptr(o.Base)
+	var in_data = o_base_blob.data
+	o_base_blob.data = nil
 	result := C.resizer(
-		(*C.Blob)(unsafe.Pointer(blobptr(o.Base))),
+		in_data,
+		(*C.Blob)(unsafe.Pointer(o_base_blob)),
 		(*C.PixelDim)(unsafe.Pointer(zoom)),
 		C.int(o.Quality), C.int(o.Method), C.CString("."+o.Format),
 		(*C.CvRect)(initCvRect(roi)),
