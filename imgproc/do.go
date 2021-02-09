@@ -13,8 +13,8 @@ import (
 	"unsafe"
 )
 
-type Blob _Ctype_Blob
-type CvRect _Ctype_CvRect
+type Blob C.struct_Blob
+type CvRect C.struct_CvRect
 
 func Do(o *Options) []byte {
 	return Filters(PrimaryActions(o))
