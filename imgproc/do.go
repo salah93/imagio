@@ -103,11 +103,12 @@ func blend(base *Source, o *Options, roi *Rect) []byte {
 
 		rect = &CvRect{C.int(roi.X), C.int(roi.Y), C.int(roi.Width), C.int(roi.Height)}
 	}
+	var base_blob = blobptr(base)
 
 	result := C.blender(
-		(*C.Blob)(blobptr(base)),
-		(*C.Blob)(blobptr(o.Foreground)),
-		(*C.Blob)(blobptr(o.Mask)),
+		(*C.Blob)(unsafe.Pointer(base_blob)),
+		(*C.Blob)(unsafe.Pointer(blobptr(o.Foreground))),
+		(*C.Blob)(unsafe.Pointer(blobptr(o.Mask))),
 		C.int(o.Quality), C.CString("."+o.Format), C.float(o.Alpha),
 		(*C.CvRect)(rect),
 	)
