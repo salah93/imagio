@@ -41,7 +41,7 @@ Blob *resizer(Blob *in, PixelDim *zoom, int quality, int method, const char *for
 	}
 
 	if(!zoom && roi) {
-		cvCopyImage(srcImg, resultImg);
+		cvCopy(srcImg, resultImg, NULL);
 	} else {
 		cvResize(srcImg, resultImg, method);
 	}
