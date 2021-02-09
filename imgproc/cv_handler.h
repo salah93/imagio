@@ -8,12 +8,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-typedef struct {
+typedef struct PixelDim{
     int64_t width;
     int64_t height;
 } PixelDim;
 
-typedef struct {
+typedef struct Blob{
     unsigned char *data;
     unsigned int length;    
 } Blob;
