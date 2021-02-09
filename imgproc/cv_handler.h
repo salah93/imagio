@@ -1,8 +1,8 @@
 #ifndef __cv_handler_h__
 #define __cv_handler_h__
 
-#include <highgui.h>
-#include <cv.h>
+#include <opencv/highgui.h>
+#include <opencv/cv.h>
 #include <stdio.h>
 #include <strings.h>
 #include <stdlib.h>

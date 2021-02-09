@@ -1,7 +1,7 @@
 package imgproc
 
 //#cgo pkg-config: opencv
-//#cgo CFLAGS: -Wno-error=unused-function
+//#cgo CFLAGS: -Wno-error=unused-function -I/usr/include/opencv/
 //#cgo LDFLAGS: -lopencv_imgproc -lopencv_core -lopencv_highgui
 //#include "cv_handler.h"
 import "C"
