@@ -14,25 +14,19 @@ import (
 	"net/http"
 	"os"
 	"runtime"
-	"strings"
 	"time"
 )
 
 var cacheGroup *groupcache.Group
 
 func initCacheGroup() {
-	self := config.Get().CacheSelf()
 
-	pool := groupcache.NewHTTPPool(self)
+	pool := groupcache.NewHTTPPool(config.Get().Listen())
 	pool.Set(config.Get().CachePeers()...)
-
-	if self != "" {
-		log.Println("Cache listen on:", strings.TrimLeft(self, "http://"))
-		go http.ListenAndServe(strings.TrimLeft(self, "http://"), http.HandlerFunc(pool.ServeHTTP))
-	}
 
 	cacheGroup = groupcache.NewGroup("imagio-storage", config.Get().CacheSize(), groupcache.GetterFunc(
 		func(ctx context.Context, key string, dest groupcache.Sink) error {
+			log.Println("cache miss")
 			dest.SetBytes(imgproc.Do(
 				Construct(new(query.Options), key).(*query.Options),
 			))
