@@ -1,7 +1,7 @@
 package imgproc
 
 //#cgo pkg-config: opencv
-//#cgo CFLAGS: -Wno-error=unused-function
+//#cgo CFLAGS: -Wno-error=unused-function -I/usr/include/opencv/
 //#cgo LDFLAGS: -lopencv_imgproc -lopencv_core -lopencv_highgui
 //#include "cv_handler.h"
 import "C"
@@ -13,8 +13,8 @@ import (
 	"unsafe"
 )
 
-type Blob _Ctype_Blob
-type CvRect _Ctype_CvRect
+type Blob C.struct_Blob
+type CvRect C.struct_CvRect
 
 func Do(o *Options) []byte {
 	return Filters(PrimaryActions(o))
@@ -64,8 +64,12 @@ func Filters(o *Options, b []byte) []byte {
 func resize(o *Options, zoom *PixelDim, roi *Rect) []byte {
 	var data []byte
 
+	var o_base_blob = blobptr(o.Base)
+	var in_data = o_base_blob.data
+	o_base_blob.data = nil
 	result := C.resizer(
-		(*C.Blob)(unsafe.Pointer(blobptr(o.Base))),
+		in_data,
+		(*C.Blob)(unsafe.Pointer(o_base_blob)),
 		(*C.PixelDim)(unsafe.Pointer(zoom)),
 		C.int(o.Quality), C.int(o.Method), C.CString("."+o.Format),
 		(*C.CvRect)(initCvRect(roi)),
@@ -99,11 +103,12 @@ func blend(base *Source, o *Options, roi *Rect) []byte {
 
 		rect = &CvRect{C.int(roi.X), C.int(roi.Y), C.int(roi.Width), C.int(roi.Height)}
 	}
+	var base_blob = blobptr(base)
 
 	result := C.blender(
-		(*C.Blob)(blobptr(base)),
-		(*C.Blob)(blobptr(o.Foreground)),
-		(*C.Blob)(blobptr(o.Mask)),
+		(*C.Blob)(unsafe.Pointer(base_blob)),
+		(*C.Blob)(unsafe.Pointer(blobptr(o.Foreground))),
+		(*C.Blob)(unsafe.Pointer(blobptr(o.Mask))),
 		C.int(o.Quality), C.CString("."+o.Format), C.float(o.Alpha),
 		(*C.CvRect)(rect),
 	)

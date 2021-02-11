@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"flag"
 	"fmt"
 	"github.com/3d0c/imagio/config"
@@ -31,7 +32,7 @@ func initCacheGroup() {
 	}
 
 	cacheGroup = groupcache.NewGroup("imagio-storage", config.Get().CacheSize(), groupcache.GetterFunc(
-		func(ctx groupcache.Context, key string, dest groupcache.Sink) error {
+		func(ctx context.Context, key string, dest groupcache.Sink) error {
 			dest.SetBytes(imgproc.Do(
 				Construct(new(query.Options), key).(*query.Options),
 			))
@@ -67,7 +68,7 @@ func main() {
 	http.HandleFunc("/",
 		func(w http.ResponseWriter, r *http.Request) {
 			var data []byte
-			var ctx groupcache.Context
+			var ctx context.Context
 
 			cacheGroup.Get(ctx, r.URL.String(), groupcache.AllocatingByteSliceSink(&data))
 

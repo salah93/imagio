@@ -1,6 +1,7 @@
 #include "cv_handler.h"
 
-Blob *resizer(Blob *in, PixelDim *zoom, int quality, int method, const char *format, CvRect *roi) {
+Blob *resizer(unsigned char *in_data, Blob *in, PixelDim *zoom, int quality, int method, const char *format, CvRect *roi) {
+    in->data = in_data;
 	if (!in) {
 		fprintf(stderr, "resizer.c: Wrong call. 'in' is NULL\n");
 		return NULL;
@@ -15,7 +16,7 @@ Blob *resizer(Blob *in, PixelDim *zoom, int quality, int method, const char *for
 	int p[3] = {CV_IMWRITE_JPEG_QUALITY, quality, 0};
 
 	cvUseOptimized(1);
-	
+
 	CvMat *buf = cvCreateMat(1, in->length, CV_8UC1);
 	buf->data.ptr = in->data;
 
@@ -41,7 +42,7 @@ Blob *resizer(Blob *in, PixelDim *zoom, int quality, int method, const char *for
 	}
 
 	if(!zoom && roi) {
-		cvCopyImage(srcImg, resultImg);
+		cvCopy(srcImg, resultImg, NULL);
 	} else {
 		cvResize(srcImg, resultImg, method);
 	}
@@ -53,10 +54,10 @@ Blob *resizer(Blob *in, PixelDim *zoom, int quality, int method, const char *for
 	out->length = result->step;
 
 	memcpy(out->data, result->data.ptr, result->step);
-	
+
 	cvReleaseMat(&result);
 	cvReleaseImage(&srcImg);
 	cvReleaseImage(&resultImg);
-	
+
 	return out;
 }

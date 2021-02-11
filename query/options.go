@@ -48,7 +48,6 @@ func (*Options) Construct(i ...interface{}) *Options {
 		}
 
 		return parseQuery(u)
-		break
 
 	default:
 		log.Println("Unsupported type:", reflect.TypeOf(v))
