@@ -16,7 +16,6 @@ const (
 	QUALITY    = 80
 	ALPHA      = 0.5
 	LISTEN_ON  = "127.0.0.1:15900"
-	CACHE_SELF = "http://127.0.0.1:9100"
 )
 
 var defaultCfg string = `
@@ -43,7 +42,6 @@ var defaultCfg string = `
     },
 
     "groupcache" : {
-        "self"  : "http://127.0.0.1:9100",
         "peers" : [],
         "size"  : "512M"
     }
@@ -71,7 +69,6 @@ type Config struct {
 	} `json:"defaults"`
 
 	GroupCache struct {
-		Self  string   `json:"self"`
 		Peers []string `json:"peers"`
 		Size  string   `json:"size"`
 	} `json:"groupcache"`
@@ -172,16 +169,8 @@ func (this *Config) RootFile() (string, error) {
 	return string(r), nil
 }
 
-func (this *Config) CacheSelf() string {
-	if this.GroupCache.Self != "" {
-		return this.GroupCache.Self
-	}
-
-	return CACHE_SELF
-}
-
 func (this *Config) CachePeers() []string {
-	this.GroupCache.Peers = append(this.GroupCache.Peers, this.CacheSelf())
+	this.GroupCache.Peers = append(this.GroupCache.Peers, this.Listen())
 
 	return this.GroupCache.Peers
 }
